@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Models;
 
 public class Product {
-    [Key]
     public long ProductId { get; set; }
     
     [Required(ErrorMessage = "Name of Product is required")]
@@ -14,13 +13,14 @@ public class Product {
     [Required(ErrorMessage = "Amount of Product is required")]
     [Range(0, 100, ErrorMessage = "Amount of Product must be between 0 and 100")]
     public int Amount { get; set; }
-    
+
     [Required(ErrorMessage = "Weight of Product is required")]
     [Range(0, 100, ErrorMessage = "Weight of Product must be between 0 and 100")]
     public decimal Weight { get; set; }
+
+    public bool IsComplete { get; set; } = false;
     
-    [ForeignKey(nameof(ShoppingList))]
     public long ShoppingListId { get; set; }
-    
+
     public ShoppingList? ShoppingList { get; set; }
 }

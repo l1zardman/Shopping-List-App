@@ -1,0 +1,11 @@
+global using Xunit;
+global using System.Collections.Generic;
+global using Microsoft.AspNetCore.Mvc;
+global using Moq;
+global using Models;
+global using ShoppingListApi.Models;
+global using ShoppingListApi.Controllers;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
+global using Models;
+global using ShoppingListApi.Models;

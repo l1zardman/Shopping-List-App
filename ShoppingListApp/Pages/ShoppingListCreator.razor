@@ -1,0 +1,86 @@
+@inject NavigationManager NavManager
+@page "/ShoppingListCreator"
+
+<div class="text-center">
+    <h3>Create Your New Shopping List!</h3>
+
+    <div class="mb-4">
+        <div class="mb-3">
+            <label class="form-label">List Name</label>
+            <input type="text" class="form-control" @bind="NewShoppingList.Name"/>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Date</label>
+            @* TODO: fix binding to from string to date *@
+            <input type="date" class="form-control" />
+        </div>
+    </div>
+
+    <h4>Add Products</h4>
+
+    <div class="d-flex align-items-center mb-3">
+        <button class="btn btn-primary me-3" @onclick="AddProduct">Add</button>
+        <input type="text" class="form-control me-2" placeholder="Product Name" @bind="NewProduct.Name"/>
+        <input type="number" class="form-control me-2" placeholder="Amount" @bind="NewProduct.Amount" min="1"/>
+        <input type="number" class="form-control me-2" placeholder="Weight (kg)" @bind="NewProduct.Weight" min="0"
+               step="0.1"/>
+    </div>
+
+    <h4>Added Products</h4>
+    @if (NewShoppingList.Products?.Any() ?? false) {
+        <ul class="list-group mb-4">
+            @foreach (var product in NewShoppingList.Products) {
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>- @product.Name - Amount: @product.Amount - Weight: @product.Weight kg</span>
+                    <button class="btn btn-danger btn-sm" @onclick="() => RemoveProduct(product)">Remove</button>
+                </li>
+            }
+        </ul>
+    }
+    else {
+        <p>No products added yet.</p>
+    }
+
+    <button class="btn btn-success" @onclick="()=>{}" >Finish</button>
+</div>
+
+
+
+@code {
+
+    private ShoppingList NewShoppingList = new ShoppingList {
+        Products = new List<Product>(),
+        Date = DateOnly.FromDateTime(DateTime.Now)
+    };
+
+    private Product NewProduct = new Product();
+    private string SelectedDate;
+
+    private void AddProduct() {
+        if (string.IsNullOrWhiteSpace(NewProduct.Name) || NewProduct.Amount <= 0 || NewProduct.Weight <= 0) {
+            // Optionally, show an error message
+            Console.WriteLine("Invalid product details.");
+            return;
+        }
+
+        NewShoppingList.Products!.Add(new Product {
+            Name = NewProduct.Name,
+            Amount = NewProduct.Amount,
+            Weight = NewProduct.Weight,
+            IsComplete = false
+        });
+
+        // Reset input fields
+        NewProduct = new Product();
+    }
+
+    private void RemoveProduct(Product product) {
+        NewShoppingList.Products!.Remove(product);
+    }
+
+    private void FinishList() {
+        throw new NotImplementedException();
+    }
+
+}

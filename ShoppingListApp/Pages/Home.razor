@@ -1,9 +1,27 @@
 ﻿@page "/"
 @inject NavigationManager NavManager
+
 <PageTitle>Home</PageTitle>
 
-<h1>Welcome in Shopping List App!</h1>
+<div id="Welcome-Title" class="text-center mt-5">
+    <h1>Welcome in Shopping List App!</h1>
+</div>
+
+<div id="List-View-Nav-Button" class="text-center mt-5">
+    <button class="btn btn-primary mb-3" @onclick="NavigateShoppingLists">View My Lists</button>
+    <br/>
+    <button class="btn btn-primary mb-3" @onclick="NavigateShoppingListCreator">Create New Shopping List</button>
+</div>
+
 
 @code {
-    
+
+    private void NavigateShoppingLists() {
+        NavManager.NavigateTo("/ShoppingListsViewer");
+    }
+
+    private void NavigateShoppingListCreator() {
+        NavManager.NavigateTo("/ShoppingListCreator");
+    }
+
 }

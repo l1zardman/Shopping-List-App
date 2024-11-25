@@ -9,4 +9,6 @@ public class ShoppingListDbContext : DbContext {
     public DbSet<Product> Products => Set<Product>();
     public DbSet<ShoppingList> ShoppingLists => Set<ShoppingList>();
     public DbSet<DefaultProduct> DefaultProducts => Set<DefaultProduct>();
+    
+    
 }
