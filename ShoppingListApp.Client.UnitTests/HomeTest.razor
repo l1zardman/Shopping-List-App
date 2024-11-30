@@ -1,0 +1,42 @@
+@using FluentAssertions
+@using ShoppingListApp.Client.Pages
+@inherits TestContext
+
+@code {
+    
+    [Fact]
+    public void HomeHas2Buttons_True() {
+        // Arrange
+        var cut = Render(@<Home/>);
+
+        // Assert that content of the paragraph shows counter at zero
+        cut.FindAll("button").Count.Should().Be(2);
+    }
+    
+    [Fact]
+    public void HomeView_HasWelcomeTitle_True() {
+        // Arrange
+        var cut = Render(@<Home/>);
+
+        // Assert that content of the paragraph shows counter at zero
+        cut.Find("#Welcome-Title").TextContent.Should().Be("Welcome in Shopping List App!");
+    }
+    
+    [Fact]
+    public void HomeView_FirstButton_ShouldHaveCorrectText_True() {
+        // Arrange
+        var cut = Render(@<Home/>);
+
+        // Assert that content of the paragraph shows counter at zero
+        cut.FindAll("button")[0].TextContent.Should().Be("View My Lists");
+    }
+    
+    [Fact]
+    public void HomeView_SecondButton_ShouldHaveCorrectText_True() {
+        // Arrange
+        var cut = Render(@<Home/>);
+
+        // Assert that content of the paragraph shows counter at zero
+        cut.FindAll("button")[1].TextContent.Should().Be("Create New Shopping List");
+    }
+}
