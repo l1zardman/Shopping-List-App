@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ShoppingListApp.Models;
 
-namespace ShoppingListApp.Api.Models;
+namespace ShoppingListApp.Api.DatabaseAccess;
 
 public class ShoppingListShoppingListRepository : IShoppingListRepository {
     private ShoppingListDbContext _context;
@@ -15,13 +15,9 @@ public class ShoppingListShoppingListRepository : IShoppingListRepository {
         return await _context.Products.ToListAsync();
     }
 
-    public async Task<Product> GetProductById(long id) {
+    public async Task<Product?> GetProductById(long id) {
         return await _context.Products.FirstOrDefaultAsync(p => p.ProductId == id);
     }
-
-    // public Product GetProductByListId(long id) {
-    //     return _context.Products.FirstOrDefault(p => p.ShoppingListId == id);
-    // }
 
     public async Task AddProduct(Product product) {
         await _context.Products.AddAsync(product);
@@ -36,26 +32,26 @@ public class ShoppingListShoppingListRepository : IShoppingListRepository {
     }
 
     // ShoppingLists
-    public async Task<IEnumerable<global::ShoppingListApp.Models.ShoppingList>> GetAllShoppingLists() {
+    public async Task<IEnumerable<ShoppingList>> GetAllShoppingLists() {
         return await _context.ShoppingLists
             .Include(p=>p.Products)
             .ToListAsync();
     }
 
-    public async Task<global::ShoppingListApp.Models.ShoppingList> GetShoppingListById(long id) {
+    public async Task<ShoppingList?> GetShoppingListById(long id) {
         return await _context.ShoppingLists
             .FirstOrDefaultAsync(sl => sl.ShoppingListId == id);
     }
 
-    public async Task AddShoppingList(global::ShoppingListApp.Models.ShoppingList shoppingList) {
+    public async Task AddShoppingList(ShoppingList shoppingList) {
         await _context.ShoppingLists.AddAsync(shoppingList);
     }
 
-    public void UpdateShoppingList(global::ShoppingListApp.Models.ShoppingList shoppingList) {
+    public void UpdateShoppingList(ShoppingList shoppingList) {
         _context.ShoppingLists.Update(shoppingList);
     }
 
-    public void RemoveShoppingList(global::ShoppingListApp.Models.ShoppingList shoppingList) {
+    public void RemoveShoppingList(ShoppingList shoppingList) {
         _context.ShoppingLists.Remove(shoppingList);
     }
 

@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using ShoppingListApp.Api.Configuration;
-using ShoppingListApp.Api.Models;
+using ShoppingListApp.Api.DatabaseAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,16 +48,18 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var dbContext = services.GetRequiredService<ShoppingListDbContext>();
-    
-    dbContext.Database.EnsureDeleted();
-    dbContext.Database.Migrate();
-}
+// using (var scope = app.Services.CreateScope())
+// {
+//     var services = scope.ServiceProvider;
+//     var dbContext = services.GetRequiredService<ShoppingListDbContext>();
+//     
+//     dbContext.Database.EnsureDeleted();
+//     dbContext.Database.Migrate();
+// }
 
 SeedData.EnsurePopulated(app);
+
+// var context = app.ApplicationServices.CreateScope().ServiceProvider.GetRequiredService<ShoppingListDbContext>();
 
 app.UseCors("AllowBlazorApp");
 

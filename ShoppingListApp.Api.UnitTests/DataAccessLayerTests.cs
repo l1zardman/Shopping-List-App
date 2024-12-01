@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using ShoppingListApp.Api.Models;
+using ShoppingListApp.Api.DatabaseAccess;
 using ShoppingListApp.Models;
 using Xunit;
 

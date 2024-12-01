@@ -12,8 +12,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingListApp.Api.Integra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingListApp.Client.UnitTests", "ShoppingListApp.Client.UnitTests\ShoppingListApp.Client.UnitTests.csproj", "{A1D4119A-4E2F-4A1F-8A4F-B04613DEF983}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingListApp.E2ESystemTests", "ShoppingListApp.E2ESystemTests\ShoppingListApp.E2ESystemTests.csproj", "{20BDFCAF-BD29-4393-94B0-9C9BA1259A07}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

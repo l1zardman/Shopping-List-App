@@ -1,25 +1,22 @@
-using Microsoft.EntityFrameworkCore;
+using System.Net;
+using System.Text.Json;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Newtonsoft.Json;
 using ShoppingListApp.Models;
-using ShoppingListApp.Api.DatabaseAccess;
 
-namespace ShoppingListApp.Api.Configuration;
+namespace ShoppingListApp.Api.IntegrationTests;
 
-public class SeedData {
-    public static void EnsurePopulated(IApplicationBuilder app) {
-        var context = app.ApplicationServices.CreateScope().ServiceProvider.GetRequiredService<ShoppingListDbContext>();
+public class ShoppingListsIntegrationTests : IClassFixture<WebApplicationFactory<Program>> {
+    private readonly HttpClient _client;
 
-        // TODO: Check it
-        context.Database.EnsureDeleted();
-        context.Database.EnsureCreated();
-        
-        // context.DefaultProducts.AddRange(
-        //     new DefaultProduct { Name = "Milk" },
-        //     new DefaultProduct { Name = "Bread" },
-        //     new DefaultProduct { Name = "Eggs" }
-        // );
-        
+    public ShoppingListsIntegrationTests(WebApplicationFactory<Program> factory) {
+        _client = factory.CreateClient(); // Create an in-memory test client
+    }
 
-        context.ShoppingLists.AddRange(
+    [Fact]
+    public async Task GetAll_WithShoppingLists_ReturnsOk() {
+        // Arrange
+        var expectedShoppingLists = new[] {
             new ShoppingList {
                 ShoppingListId = 1,
                 Name = "Deafult list 1",
@@ -49,8 +46,17 @@ public class SeedData {
                 },
                 Date = DateOnly.ParseExact("2023-06-30", "O")
             }
-        );
-        
-        context.SaveChanges();
+        };
+
+        // Act
+        var response = await _client.GetAsync("/api/ShoppingList");
+        var responseBody = await response.Content.ReadAsStringAsync();
+        var actualShoppingLists = JsonConvert.DeserializeObject<IEnumerable<ShoppingList>>(responseBody);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(actualShoppingLists);
+        Assert.Equal(expectedShoppingLists.Length, actualShoppingLists.Count());
+        Assert.Equal(expectedShoppingLists.Select(s => s.Name), actualShoppingLists.Select(s => s.Name));
     }
 }
