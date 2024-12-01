@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ShoppingListApp.Api.Models;
+using ShoppingListApp.Models;
 
 namespace ShoppingListApp.Api.Controllers;
 
@@ -14,9 +15,16 @@ public class ShoppingListController : ControllerBase {
 
     // GET: /api/shoppinglists
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<global::ShoppingListApp.Models.ShoppingList>>> GetAll() {
+    public async Task<ActionResult<IEnumerable<ShoppingList>>> GetAll() {
         var shoppingLists = await _shoppingListRepository.GetAllShoppingLists();
         return Ok(shoppingLists);
+    }
+
+    [HttpGet("names")]
+    public async Task<ActionResult<IEnumerable<string>>> GetAllNames() {
+        var shoppingLists = await _shoppingListRepository.GetAllShoppingLists();
+        var namesList = shoppingLists.Select(sl => sl.Name).ToList();
+        return Ok(namesList);        
     }
 
     // GET: /api/shoppinglists/{id}

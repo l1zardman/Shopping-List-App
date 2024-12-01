@@ -62,3 +62,5 @@ SeedData.EnsurePopulated(app);
 app.UseCors("AllowBlazorApp");
 
 app.Run();
+
+public partial class Program { }

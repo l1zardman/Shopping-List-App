@@ -20,4 +20,8 @@
       <ProjectReference Include="..\ShoppingListApp.Models\ShoppingListApp.Models.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="ShoppingListApp.Api.IntegrationTests" />
+    </ItemGroup>
+    
 </Project>

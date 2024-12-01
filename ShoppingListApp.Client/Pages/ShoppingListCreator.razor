@@ -1,4 +1,7 @@
+@using ShoppingListApp.Client.Services
+
 @inject NavigationManager NavManager
+
 @page "/ShoppingListCreator"
 
 <div class="text-center">
@@ -8,12 +11,20 @@
         <div class="mb-3">
             <label class="form-label">List Name</label>
             <input type="text" class="form-control" @bind="NewShoppingList.Name"/>
+
+            @if (!string.IsNullOrEmpty(NameErrorMessage)) {
+                <p class="text-danger">@NameErrorMessage</p>
+            }
         </div>
 
         <div class="mb-3">
             <label class="form-label">Date</label>
             @* TODO: fix binding to from string to date *@
-            <input type="date" class="form-control"/>
+            <input type="date" class="form-control" @bind="SelectedDate"/>
+
+            @if (!string.IsNullOrEmpty(DateErrorMessage)) {
+                <p class="text-danger">@DateErrorMessage</p>
+            }
         </div>
     </div>
 
@@ -26,6 +37,9 @@
         <input type="number" class="form-control me-2" placeholder="Weight (kg)" @bind="NewProduct.Weight" min="0"
                step="0.1"/>
     </div>
+    @if (!string.IsNullOrEmpty(ProductErrorMessage)) {
+        <p class="text-danger">@ProductErrorMessage</p>
+    }
 
     <h4>Added Products</h4>
     @if (NewShoppingList.Products?.Any() ?? false) {
@@ -42,28 +56,50 @@
         <p>No products added yet.</p>
     }
 
-    <button class="btn btn-success" @onclick="()=>{}">Finish</button>
+    <button class="btn btn-success" @onclick="FinishList">Finish</button>
+
+    @if (!string.IsNullOrEmpty(FinishErrorMessage)) {
+        <p class="text-danger">@FinishErrorMessage</p>
+    }
 </div>
 
 
 
 @code {
 
+    private Product NewProduct = new Product();
+    private DateTime SelectedDate = DateTime.Now;
+
+    private string NameErrorMessage;
+    private string ProductErrorMessage;
+    private string DateErrorMessage;
+    private string FinishErrorMessage;
+
+    [Inject]
+    public IProductService ProductService { get; set; }
+
+    [Inject]
+    public IShoppingListService ShoppingListService { get; set; }
+
     private ShoppingList NewShoppingList = new ShoppingList {
         Products = new List<Product>(),
         Date = DateOnly.FromDateTime(DateTime.Now)
     };
 
-    private Product NewProduct = new Product();
-    private string SelectedDate;
 
-    private void AddProduct() {
-        if (string.IsNullOrWhiteSpace(NewProduct.Name) || NewProduct.Amount <= 0 || NewProduct.Weight <= 0) {
-            // Optionally, show an error message
-            Console.WriteLine("Invalid product details.");
+    private async Task AddProduct() {
+        if (string.IsNullOrWhiteSpace(NewProduct.Name) || NewProduct.Name.Length <= 2) {
+            ProductErrorMessage = "Product name must be longer than 2 letters.";
             return;
         }
 
+        if (NewProduct.Amount <= 0 || NewProduct.Weight <= 0) {
+            ProductErrorMessage = "Amount and weight must be greater than zero.";
+            return;
+        }
+
+        ProductErrorMessage = string.Empty;
+        
         NewShoppingList.Products!.Add(new Product {
             Name = NewProduct.Name,
             Amount = NewProduct.Amount,
@@ -79,8 +115,44 @@
         NewShoppingList.Products!.Remove(product);
     }
 
-    private void FinishList() {
-        throw new NotImplementedException();
+    private async Task FinishList() {
+        FinishErrorMessage = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(NewShoppingList.Name)) {
+            FinishErrorMessage = "List name cannot be empty.";
+            return;
+        }
+
+        if (NewShoppingList.Products == null || !NewShoppingList.Products.Any()) {
+            FinishErrorMessage = "List must have at least one product.";
+            return;
+        }
+
+        // Validate date
+        // if (!DateOnly.(SelectedDate, out var parsedDate)) {
+        //     FinishErrorMessage = "Invalid date format. Please use yyyy-MM-dd.";
+        //     return;
+        // }
+        
+        var parsedDate = DateOnly.FromDateTime(SelectedDate);
+
+        NewShoppingList.Date = parsedDate;
+
+        // Ensure list name is unique
+        var existingNames = await ShoppingListService.GetShoppingListsNames();
+        var baseName = NewShoppingList.Name;
+        var counter = 1;
+
+        while (existingNames.Contains(NewShoppingList.Name)) {
+            NewShoppingList.Name = $"{baseName}({counter++})";
+        }
+
+        // Save the shopping list (implement your saving logic here)
+        //todo: implement saving logic
+        // SaveShoppingList(NewShoppingList);
+        await ShoppingListService.CreateShoppingList(NewShoppingList);
+
+        NavManager.NavigateTo("/ShoppingListsViewer");
     }
 
 }

@@ -9,25 +9,24 @@
 
 
 @code {
-    
+
     [Fact]
     public void OnInitializedAsync_InvalidCall_ShoppingListsIsNull_DisplaysLoadingMessage() {
-
         List<ShoppingList>? l = null;
-        
+
         // Arrange
         var productServiceMock = new Mock<IProductService>();
         var shoppingListServiceMock = new Mock<IShoppingListService>();
         shoppingListServiceMock.Setup(s => s.GetAllShoppingLists()).ReturnsAsync(l);
-        
+
         Services.AddSingleton(shoppingListServiceMock.Object);
         Services.AddSingleton(productServiceMock.Object);
-        
+
         var component = RenderComponent<ShoppingListsViewer>();
-        
+
         // Act
         // No explicit action, as the component initializes in a loading state.
-    
+
         // Assert
         component.Find("p").TextContent.Should().Be("Loading...");
     }
@@ -35,33 +34,31 @@
     [Fact]
     public void OnInitializedAsync_InvalidCall_ShoppingListsIsEmpty_DisplaysInformationMessage() {
         List<ShoppingList> l = new();
-        
+
         // Arrange
         var productServiceMock = new Mock<IProductService>();
         var shoppingListServiceMock = new Mock<IShoppingListService>();
         shoppingListServiceMock.Setup(s => s.GetAllShoppingLists()).ReturnsAsync(l);
-        
+
         Services.AddSingleton(shoppingListServiceMock.Object);
         Services.AddSingleton(productServiceMock.Object);
-        
+
         var component = RenderComponent<ShoppingListsViewer>();
 
-    
+
         Assert.Contains("No shopping lists available. Please create one!", component.Markup);
     }
 
     [Fact]
-    public async Task OnInitializedAsync_ValidServiceCall_PopulatesShoppingLists()
-    {
+    public async Task OnInitializedAsync_ValidServiceCall_PopulatesShoppingLists() {
         // Arrange
-        var shoppingLists = new List<ShoppingList>
-        {
+        var shoppingLists = new List<ShoppingList> {
             new ShoppingList { ShoppingListId = 1, Name = "Groceries", Date = DateOnly.Parse("2024/11/28") },
-            new ShoppingList { ShoppingListId = 2, Name = "Party Supplies", Date =DateOnly.Parse("2024/11/28") }
+            new ShoppingList { ShoppingListId = 2, Name = "Party Supplies", Date = DateOnly.Parse("2024/11/28") }
         };
 
         var productServiceMock = new Mock<IProductService>();
-        
+
         var shoppingListServiceMock = new Mock<IShoppingListService>();
         shoppingListServiceMock.Setup(s => s.GetAllShoppingLists()).ReturnsAsync(shoppingLists);
 
@@ -69,7 +66,7 @@
         Services.AddSingleton(productServiceMock.Object);
 
         // Act
-        var component = RenderComponent<ShoppingListsViewer>(); 
+        var component = RenderComponent<ShoppingListsViewer>();
         component.WaitForState(() => component.Instance.ShoppingLists != null);
 
         // Assert
@@ -80,31 +77,27 @@
 
 
     [Fact]
-    public void ShowListDetails_ValidListId_ShowsSelectedDetails()
-    {
+    public void ShowListDetails_ValidListId_ShowsSelectedDetails() {
         // Arrange
-        var shoppingLists = new List<ShoppingList>
-        {
-            new ShoppingList
-            {
+        var shoppingLists = new List<ShoppingList> {
+            new ShoppingList {
                 ShoppingListId = 1,
                 Name = "Groceries",
                 Date = DateOnly.Parse("2024/11/28"),
-                Products = new List<Product>
-                {
+                Products = new List<Product> {
                     new Product { ProductId = 1, Name = "Apples", Amount = 2, Weight = 1.5m, IsComplete = false }
                 }
             }
         };
-        
+
         var productServiceMock = new Mock<IProductService>();
         var shoppingListServiceMock = new Mock<IShoppingListService>();
 
         shoppingListServiceMock.Setup(s => s.GetAllShoppingLists()).ReturnsAsync(shoppingLists);
-        
+
         Services.AddSingleton(shoppingListServiceMock.Object);
         Services.AddSingleton(productServiceMock.Object);
-        
+
         var component = RenderComponent<ShoppingListsViewer>();
 
         // Act
@@ -115,20 +108,16 @@
         Assert.Contains("Apples", component.Markup);
     }
 
-    
+
     [Fact]
-    public async Task UpdateProduct_ValidUpdate_UpdatesProductState()
-    {
+    public async Task UpdateProduct_ValidUpdate_UpdatesProductState() {
         // Arrange
-        var shoppingLists = new List<ShoppingList>
-        {
-            new ShoppingList
-            {
+        var shoppingLists = new List<ShoppingList> {
+            new ShoppingList {
                 ShoppingListId = 1,
                 Name = "Groceries",
                 Date = DateOnly.Parse("2024/11/28"),
-                Products = new List<Product>
-                {
+                Products = new List<Product> {
                     new Product { ProductId = 1, Name = "Apples", Amount = 2, Weight = 1.5m, IsComplete = false }
                 }
             }
@@ -136,7 +125,7 @@
 
         var productServiceMock = new Mock<IProductService>();
         var shoppingListServiceMock = new Mock<IShoppingListService>();
-        
+
         shoppingListServiceMock.Setup(s => s.GetAllShoppingLists()).ReturnsAsync(shoppingLists);
         productServiceMock.Setup(s => s.UpdateProduct(It.IsAny<Product>())).Returns(Task.CompletedTask);
 
@@ -156,18 +145,16 @@
     }
 
     [Fact]
-    public async Task DeleteList_ValidList_RemovesListFromDisplay()
-    {
+    public async Task DeleteList_ValidList_RemovesListFromDisplay() {
         // Arrange
-        var shoppingLists = new List<ShoppingList>
-        {
+        var shoppingLists = new List<ShoppingList> {
             new ShoppingList { ShoppingListId = 1, Name = "Groceries", Date = DateOnly.Parse("2024/11/28") },
             new ShoppingList { ShoppingListId = 2, Name = "Party Supplies", Date = DateOnly.Parse("2024/11/28") }
         };
 
         var shoppingListServiceMock = new Mock<IShoppingListService>();
         var productServiceMock = new Mock<IProductService>();
-        
+
         shoppingListServiceMock.Setup(s => s.GetAllShoppingLists()).ReturnsAsync(shoppingLists);
         shoppingListServiceMock.Setup(s => s.DeleteShoppingList(It.IsAny<string>())).Returns(Task.CompletedTask);
 

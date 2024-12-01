@@ -8,6 +8,8 @@ using ShoppingListApp.Api.Controllers;
 using ShoppingListApp.Models;
 using Xunit;
 
+namespace ShoppingListApp.Api.UnitTests;
+
 public class ProductsControllerTests {
     private readonly Mock<IShoppingListRepository> _mockRepository;
     private readonly ProductsController _controller;

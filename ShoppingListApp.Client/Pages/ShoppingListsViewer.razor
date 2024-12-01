@@ -15,16 +15,16 @@
         <p>No shopping lists available. Please create one!</p>
     }
     else {
-        <ul class="list-group">
+        <ul id="shopping-lists-list" class="list-group">
 
             @foreach (var list in ShoppingLists) {
-                <li class="list-group-item">
+                <li id="shopping-lists-element" class="list-group-item">
                     <div class="d-flex justify-content-between align-items-center">
-                        <span>@list.Name - @list.Date.ToString()</span>
+                        <span id="shopping-list-name-date">@list.Name - @list.Date.ToString()</span>
 
                         <div>
                             @* TODO : connect to api point that deletes list *@
-                            <button class="btn btn-success btn-sm me-2" @onclick="() => DeleteList(list)">Done</button>
+                            <button id="done-btn" class="btn btn-success btn-sm me-2" @onclick="() => DeleteList(list)">Done</button>
 
                             <button id="view-details-btn" class="btn btn-primary btn-sm"
                                     @onclick="() => ShowListDetails(list.ShoppingListId)">
@@ -41,14 +41,14 @@
     }
 
     @if (_clicked && SelectedShoppingList != null) {
-        <div class="mt-3">
+        <div id="details-view-div" class="mt-3">
             @if (SelectedShoppingList.Products == null || !SelectedShoppingList.Products.Any()) {
                 <p>No products available in this shopping list.</p>
             }
 
-            <ul class="list-group">
+            <ul id="shopping-list-details" class="list-group">
                 @foreach (var product in SelectedShoppingList?.Products ?? Enumerable.Empty<Product>()) {
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <li id="shopping-list-details-row" class="list-group-item d-flex justify-content-between align-items-center">
 
                         <span style="@(product.IsComplete ? "text-decoration: line-through;" : "")">
                             - @product.Name - Amount: @product.Amount - Weight: @product.Weight kg
